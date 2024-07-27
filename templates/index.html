@@ -3,18 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Website</title>
+    <title>Eco-Friendly Commute Tracker</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&callback=initMap" async defer></script>
 </head>
 <body>
-    <header>
-        <h1>EcoPath</h1>
-    </header>
-    <main>
+    <h1>EcoPath</h1>
+    <form id="commuteForm">
+        <label for="start">Starting Location:</label>
+        <input type="text" id="start" name="start" required>
+        <label for="end">Ending Location:</label>
+        <input type="text" id="end" name="end" required>
+        <label for="mode">Mode of Transport:</label>
+        <select id="mode" name="mode">
+            <option value="driving">Car</option>
+            <option value="transit">Bus</option>
+            <option value="bicycling">Bike</option>
+            <option value="walking">Walking</option>
+        </select>
+        <button type="submit">Calculate</button>
+    </form>
+    <div id="results"></div>
+    <div id="map" style="height: 400px; width: 100%;"></div>
+
+    <script>
+        document.getElementById('commuteForm').onsubmit = function(e) {
+            e.preventDefault();
+            const start = document.getElementById('start').value;
+            const end = document.getElementById('end').value;
+            const mode = document.getElementById('mode').value;
+
+            fetch('/calculate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ start, end, mode })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    document.getElementById('results').innerHTML = `Distance: ${data.distance} km, Duration: ${data.duration}, Emissions: ${data.emissions} kg CO2`;
+                    // Add map initialization and routing logic here
+                }
+            });
+        };
+    </script>
+    
+    <script>
+        function initMap() {
+            const directionsService = new google.maps.DirectionsService();
+            const directionsRenderer = new google.maps.DirectionsRenderer();
+            const map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 7,
+                center: { lat: 43.65107, lng: -79.347015 }  // Toronto, ON coordinates
+            });
+            directionsRenderer.setMap(map);
+    
+            document.getElementById('commuteForm').onsubmit = function(e) {
+                e.preventDefault();
+                const start = document.getElementById('start').value;
+                const end = document.getElementById('end').value;
+                const mode = document.getElementById('mode').value.toUpperCase();
+    
+                directionsService.route({
+                    origin: start,
+                    destination: end,
+                    travelMode: google.maps.TravelMode[mode]
+                }, (response, status) => {
+                    if (status === 'OK') {
+                        directionsRenderer.setDirections(response);
+                    } else {
+                        window.alert('Directions request failed due to ' + status);
+                    }
+                });
+            };
+        }
+    </script>
+
+    <!--<main>
         <h2>Carbon Footprint</h2>
         <p>Walking: 0 tons.</p>
         <p>Biking: 0 tons.</p>
         <p>Driving: 1 ton.</p>
-    </main>
+    </main>-->
 </body>
 </html>

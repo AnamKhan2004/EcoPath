@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Eco-Friendly Commute Tracker</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places&callback=initMap" async defer></script>
 </head>
 <body>
     <header>
@@ -26,9 +27,24 @@
             <button type="submit">Calculate</button>
         </form>
         <div id="results"></div>
+        <div id="map" style="height: 400px; width: 100%;"></div>
     </main>
 
     <script>
+        let map, directionsService, directionsRenderer;
+
+        function initMap() {
+            // Initialize the map centered on Toronto, Ontario
+            map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 10,
+                center: { lat: 43.65107, lng: -79.347015 }
+            });
+
+        // Initialize the Directions service and renderer
+        directionsService = new google.maps.DirectionsService();
+        directionsRenderer = new google.maps.DirectionsRenderer();
+        directionsRenderer.setMap(map);
+        }
         document.getElementById('commuteForm').onsubmit = function(e) {
             e.preventDefault();
             const start = document.getElementById('start').value;
@@ -47,6 +63,21 @@
                     alert(data.error);
                 } else {
                     document.getElementById('results').innerHTML = `Distance: ${data.distance} km, Duration: ${data.duration}, Emissions: ${data.emissions} kg CO2`;
+                    
+                    directionsService.route(
+                        {
+                            origin: start,
+                            destination: end,
+                            travelMode: google.maps.TravelMode[mode.toUpperCase()]
+                        },
+                        (result, status) => {
+                            if (status === 'OK') {
+                                directionsRenderer.setDirections(result);
+                            } else {
+                                alert('Could not display directions due to: ' + status);
+                            }
+                        }
+                    );
                 }
             });
         };

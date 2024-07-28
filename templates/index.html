@@ -65,9 +65,9 @@
                     alert(data.error);
                 } else {
                     document.getElementById('results').innerHTML = `
-                        <div class="results-text">Distance: ${data.distance} km</div>
+                        <div class="results-text">Distance: ${data.distance}</div>
                         <div class="results-text">Duration: ${data.duration}</div>
-                        <div class="results-text bold-text">Emissions: ${data.emissions} kg CO2</div>
+                        <div class="results-text bold-text">Carbon Emissions: ${data.emissions} kg CO2</div>
                     `;
                     
                     directionsService.route(

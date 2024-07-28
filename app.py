@@ -30,7 +30,7 @@ def calculate():
             'bicycling': 0,
             'walking': 0
         }
-        emissions = distance_km * emission_factors.get(mode, 0)
+        emissions = round(distance_km * emission_factors.get(mode, 0),2)
 
         return jsonify({
             'distance': distance_text,

@@ -32,24 +32,26 @@
 
     <script>
         let map, directionsService, directionsRenderer;
-
+    
         function initMap() {
             // Initialize the map centered on Toronto, Ontario
             map = new google.maps.Map(document.getElementById('map'), {
                 zoom: 10,
                 center: { lat: 43.65107, lng: -79.347015 }
             });
-
-        // Initialize the Directions service and renderer
-        directionsService = new google.maps.DirectionsService();
-        directionsRenderer = new google.maps.DirectionsRenderer();
-        directionsRenderer.setMap(map);
+    
+            // Initialize the Directions service and renderer
+            directionsService = new google.maps.DirectionsService();
+            directionsRenderer = new google.maps.DirectionsRenderer();
+            directionsRenderer.setMap(map);
         }
+    
         document.getElementById('commuteForm').onsubmit = function(e) {
             e.preventDefault();
             const start = document.getElementById('start').value;
             const end = document.getElementById('end').value;
             const mode = document.getElementById('mode').value;
+    
             fetch('/calculate', {
                 method: 'POST',
                 headers: {
@@ -62,13 +64,17 @@
                 if (data.error) {
                     alert(data.error);
                 } else {
-                    document.getElementById('results').innerHTML = `Distance: ${data.distance} km, Duration: ${data.duration}, Emissions: ${data.emissions} kg CO2`;
+                    document.getElementById('results').innerHTML = `
+                        <div class="results-text">Distance: ${data.distance} km</div>
+                        <div class="results-text">Duration: ${data.duration}</div>
+                        <div class="results-text bold-text">Emissions: ${data.emissions} kg CO2</div>
+                    `;
                     
                     directionsService.route(
                         {
                             origin: start,
                             destination: end,
-                            travelMode: google.maps.TravelMode[mode]
+                            travelMode: google.maps.TravelMode[mode.toUpperCase()]
                         },
                         (result, status) => {
                             if (status === 'OK') {
@@ -81,6 +87,7 @@
                 }
             });
         };
+    
         // Load the map
         initMap();
     </script>

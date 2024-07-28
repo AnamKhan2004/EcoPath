@@ -68,3 +68,14 @@ button:hover {
 #results {
     margin-top: 20px;
 }
+
+/* Additional styling for results text */
+.results-text {
+    font-size: 1.5em; /* Adjust the font size as needed */
+    margin: 10px 0;   /* Add some margin for better spacing */
+}
+
+/* Additional styling for bold text */
+.bold-text {
+    font-weight: bold;
+}

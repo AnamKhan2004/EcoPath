@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Eco-Friendly Commute Tracker</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places&callback=initMap" async defer></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key={{ API_KEY }}&libraries=places" async defer></script>
 </head>
 <body>
     <header>
@@ -68,7 +68,7 @@
                         {
                             origin: start,
                             destination: end,
-                            travelMode: google.maps.TravelMode[mode.toUpperCase()]
+                            travelMode: google.maps.TravelMode[mode]
                         },
                         (result, status) => {
                             if (status === 'OK') {
@@ -81,6 +81,8 @@
                 }
             });
         };
+        // Load the map
+        initMap();
     </script>
 </body>
 </html>

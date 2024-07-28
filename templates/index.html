@@ -7,22 +7,26 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
-    <h1>EcoPath</h1>
-    <form id="commuteForm">
-        <label for="start">Starting Location:</label>
-        <input type="text" id="start" name="start" required>
-        <label for="end">Ending Location:</label>
-        <input type="text" id="end" name="end" required>
-        <label for="mode">Mode of Transport:</label>
-        <select id="mode" name="mode">
-            <option value="driving">Car</option>
-            <option value="transit">Bus</option>
-            <option value="bicycling">Bike</option>
-            <option value="walking">Walking</option>
-        </select>
-        <button type="submit">Calculate</button>
-    </form>
-    <div id="results"></div>
+    <header>
+        <h1>EcoPath</h1>
+    </header>
+    <main>
+        <form id="commuteForm">
+            <label for="start">Starting Location:</label>
+            <input type="text" id="start" name="start" required>
+            <label for="end">Ending Location:</label>
+            <input type="text" id="end" name="end" required>
+            <label for="mode">Mode of Transport:</label>
+            <select id="mode" name="mode">
+                <option value="driving">Car</option>
+                <option value="transit">Bus</option>
+                <option value="bicycling">Bike</option>
+                <option value="walking">Walking</option>
+            </select>
+            <button type="submit">Calculate</button>
+        </form>
+        <div id="results"></div>
+    </main>
 
     <script>
         document.getElementById('commuteForm').onsubmit = function(e) {
@@ -30,8 +34,7 @@
             const start = document.getElementById('start').value;
             const end = document.getElementById('end').value;
             const mode = document.getElementById('mode').value;
-            console.log(start, end, mode);
-            fetch('calculate', {
+            fetch('/calculate', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

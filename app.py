@@ -1,41 +1,44 @@
 from flask import Flask, render_template, request, jsonify
 import requests
 import os
-from config import GOOGLE_MAPS_API_KEY
+import googlemaps
+from config import API_KEY
 
 app = Flask(__name__)
+gmaps = googlemaps.Client(key=API_KEY)
 
 @app.route('/')
 def index():
     return render_template('index.html')
 
-if __name__ == '__main__':
-    app.run(debug=True)
-
 @app.route('/calculate', methods=['POST'])
 def calculate():
-    start = request.form['start']
-    end = request.form['end']
-    mode = request.form['mode']
+    data = request.get_json()
+    start = data.get('start')
+    end = data.get('end')
+    mode = data.get('mode')
 
-    # Google Maps Distance Matrix API endpoint
-    url = f"https://maps.googleapis.com/maps/api/distancematrix/json?origins={start}&destinations={end}&mode={mode}&key={GOOGLE_MAPS_API_KEY}"
-    response = requests.get(url)
-    data = response.json()
+    try:
+        result = gmaps.distance_matrix(start, end, mode)
+        distance_text = result['rows'][0]['elements'][0]['distance']['text']
+        time_taken = result['rows'][0]['elements'][0]['duration']['text']
 
-    if data['status'] == 'OK':
-        distance = data['rows'][0]['elements'][0]['distance']['value'] / 1000  # in km
-        duration = data['rows'][0]['elements'][0]['duration']['text']
-
-        # Calculate carbon footprint
+        distance_km = float(distance_text.split()[0])
         emission_factors = {
             'driving': 0.21,  # kg CO2 per km
             'transit': 0.1,
             'bicycling': 0,
             'walking': 0
         }
-        emissions = distance * emission_factors.get(mode, 0)
+        emissions = distance_km * emission_factors.get(mode, 0)
 
-        return jsonify({'distance': distance, 'duration': duration, 'emissions': emissions})
-    else:
-        return jsonify({'error': 'Error fetching data from Google Maps API'}), 500
+        return jsonify({
+            'distance': distance_text,
+            'duration': time_taken,
+            'emissions': emissions
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
+if __name__ == '__main__':
+    app.run(debug=True)

@@ -1,5 +1,5 @@
 import os
 
-GOOGLE_MAPS_API_KEY = os.environ.get('GOOGLE_MAPS_API_KEY', 'AIzaSyCdKPXkBgtiIVoYuRAl9GUkkVWry8a_4gA')
-if GOOGLE_MAPS_API_KEY is None:
-    raise ValueError("No GOOGLE_MAPS_API_KEY set for environment")
+API_KEY = os.environ.get('API_KEY', 'AIzaSyCdKPXkBgtiIVoYuRAl9GUkkVWry8a_4gA')
+if API_KEY is None:
+    raise ValueError("No API_KEY set for environment")

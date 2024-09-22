@@ -1,6 +1,8 @@
 # EcoPath
 http://127.0.0.1:5000/
 
+![alt text](https://github.com/AnamKhan2004/EcoPath/blob/4b0eeebe803711e085e3f8850edf028e10602b57/Ecopath%20frontend.png)
+
 ## Inspiration
 As climate change concerns grow, individuals and organizations are increasingly aware of their carbon footprints. 
 However, many lack easy access to information about the environmental impact of their travel choices.
